@@ -1,0 +1,435 @@
+#%RAML 1.0
+title: ImageViewer_Assign4
+version: v1
+baseUri: http://api.samplehost.com
+securitySchemes:
+   basicAuth:
+    description: Requires basic authentication for every API request.
+    type: Basic Authentication
+types:
+  TestType:
+    type: object
+    properties:
+      id: number
+      optional?: string
+      expanded:
+        type: object
+        properties:
+          count: number
+/SignIn:
+  post:
+    description: "Signs the user in and creates cookies for them (yum)"
+    securedBy: [basicAuth]
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+                {
+                  "message": "user already logged in"
+                }
+      201:
+        body:
+          application/json:
+            example: |
+                {
+                  "message": "user logged in successfully"
+                }
+      403:
+        body:
+          application/json:
+            example: |
+                {
+                  "message": "Access denied"
+                }
+  delete:
+    description: "Deletes the user session"
+    securedBy: [basicAuth]
+    responses:
+      400:
+        body:
+          application/json:
+            example: |
+              {
+                "message": "Bad request"
+              }
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "message": "user logged out successfully"
+              }
+      403:
+        body:
+          application/json:
+            example: |
+              {
+                "message": "user session doesn't exist""
+              }
+
+/pictureRoot:
+  get:
+    description: "Retrieves the pictures of all users"
+    securedBy: [basicAuth]
+    responses:
+      200:
+        body:
+          application/json:
+            example: | #there will be one of these for each user
+              {
+                "user" : "username"
+                "pictures" : array #Will return an array of pictures
+              }
+      400:
+        body:
+          application/json:
+            example: |
+                {
+                  "message": "Bad request"
+                }
+      403:
+        body:
+          application/json:
+            example: |
+                {
+                  "message": "Invalid login credentials"
+                }
+      500:
+         body:
+           application/json:
+             example: |
+                 {
+                   "message": "Internal server error"
+                 }
+/users:
+    post:
+      description: "Creates a new user"
+      securedBy: [basicAuth]
+      queryParameters:
+        username: string #login info
+        password: string
+      responses:
+        201:
+          body:
+            application/json:
+              example: |
+                {
+                  "message": "Username: {username} Successfully created"
+                  "user": "username" #this will be the username of the user that is created
+                }
+        400:
+          body:
+            application/json:
+              example: |
+                {
+                  "message": "Bad request"
+                }
+        500:
+           body:
+             application/json:
+               example: |
+                   {
+                     "message": "Internal server error"
+                   }
+        409:
+           body:
+             application/json:
+               example: |
+                   {
+                     "message": "username: {username} already exists"
+                   }
+    delete:
+      description: "Delete your account"
+      securedBy: [basicAuth]
+      queryParameters:
+        username: string #login info
+        password: string
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  "message": "User successfully deleted"
+                  "username": "username"
+                }
+        400:
+          body:
+            application/json:
+              example: |
+                  {
+                    "message": "Bad request"
+                  }
+        500:
+          body:
+            application/json:
+              example: |
+                  {
+                    "message": "Internal server error"
+                  }
+        403:
+          body:
+            application/json:
+              example: |
+                  {
+                    "message": "Access denied, need to include username and password, or sign in first"
+                  }
+    put:
+      description: "Change your username"
+      securedBy: [basicAuth]
+      queryParameters:
+        username: string #login info
+        password: string
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  "message": "Username successfully changed"
+                  "username": "username"
+                }
+        400:
+          body:
+            application/json:
+              example: |
+                  {
+                    "message": "Bad request"
+                  }
+        500:
+          body:
+            application/json:
+              example: |
+                  {
+                    "message": "Internal server error"
+                  }
+        406:
+          body:
+            application/json:
+              example: |
+                  {
+                    "message": "Username already taken"
+                  }
+        403:
+          body:
+            application/json:
+              example: |
+                  {
+                    "message": "Access denied, need to include username and password, or sign in first"
+                  }
+/pictureRoot/userPictures/specificPicture:
+    delete:
+      description: "Delete a given photo for the current user"
+      securedBy: [basicAuth]
+      queryParameters:
+        username: string #login info
+        password: string
+        imageName: string
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  "message": "Photo {imageName} successfully deleted"
+                  "username": "photoID"
+                }
+        400:
+          body:
+           application/json:
+             example: |
+                 {
+                   "message": "Bad request"
+                 }
+        500:
+           body:
+             application/json:
+               example: |
+                   {
+                     "message": "Internal server error"
+                   }
+        404:
+          body:
+            application/json:
+              example: |
+                  {
+                    "message": "{imageName} doesn't exist"
+                  }
+        403:
+          body:
+            application/json:
+              example: |
+                  {
+                    "message": "Invalid login credentials"
+                  }
+    get:
+      description: "Retrieves the photos of the current user"
+      securedBy: [basicAuth]
+      queryParameters:
+        username: string #login info
+        password: string
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  "user" : "username"
+                  "pictures" : array #will return an array of the different photo names
+                }
+        404:
+          body:
+            application/json:
+              example: |
+                {
+                  "message": "not found"
+                }
+        400:
+          body:
+           application/json:
+             example: |
+                 {
+                   "message": "Bad request"
+                 }
+        500:
+          body:
+            application/json:
+              example: |
+                  {
+                    "message": "Internal server error"
+                  }
+        403:
+          body:
+            application/json:
+              example: |
+                  {
+                    "message": "Invalid login credentials"
+                  }
+    post:
+     description: "Creates a new photo for current user"
+     securedBy: [basicAuth]
+     queryParameters:
+       username: string #login info
+       password: string
+       imageName: string
+     responses:
+       201:
+         body:
+           application/json:
+             example: |
+               {
+                 "message": "Photo successfully added"
+                 "user": "photoID" #this will be the username of the user that is created
+               }
+       400:
+         body:
+           application/json:
+             example: |
+               {
+                 "message": "Bad request"
+               }
+
+       500:
+         body:
+           application/json:
+             example: |
+                 {
+                   "message": "Internal server error"
+                 }
+       406:
+         body:
+           application/json:
+             example: |
+                 {
+                   "message": "Photo already used, please rename the picture"
+                 }
+       401:
+          body:
+            application/json:
+              example: |
+                {
+                  "message": "You need to have login using users/signIn endpoint in order to post a photo"
+                }
+    put:
+      description: "Update name of a given image"
+      securedBy: [basicAuth]
+      queryParameters:
+        username: string #login info
+        password: string
+        currentImageName: string
+        newImageName: string
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  "message": "{currentImageName} was successfully changed to {newImageName}"
+                  "username": "username"
+                }
+        400:
+          body:
+            application/json:
+              example: |
+                  {
+                    "message": "Bad request"
+                  }
+        500:
+          body:
+            application/json:
+              example: |
+                  {
+                    "message": "Internal server error"
+                  }
+        404:
+         body:
+           application/json:
+             example: |
+                 {
+                   "message": "Could not find picture"
+                 }
+        406:
+          body:
+            application/json:
+              example: |
+                  {
+                    "message": "{newImageName} already used, please use a new one"
+                  }
+        403:
+          body:
+            application/json:
+              example: |
+                  {
+                    "message": "Invalid login credentials"
+                  }
+/pictureRoot/userPictures:
+    get:
+      description: "Return user images"
+      securedBy: [basicAuth]
+      queryParameters:
+        username: string #login info
+        password: string
+      responses:
+          200:
+            body:
+              application/json:
+                example: |
+                  {
+                    "message": "{currentImageName} was successfully changed to {newImageName}"
+                    "username": "username"
+                  }
+          400:
+            body:
+              application/json:
+                example: |
+                    {
+                      "message": "Bad request"
+                    }
+          403:
+            body:
+              application/json:
+                example: |
+                    {
+                      "message": "Invalid login credentials"
+                    }

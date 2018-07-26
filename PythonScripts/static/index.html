@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title> Image Viewer Test </title>
+	<meta charset="UTF-8">
+
+		<style>
+			.imageWrap {
+				display:inline-block;
+				position:relative;
+			}
+			.delButton {
+				position:absolute;
+				top:0;
+				right:0;
+			}
+
+			.file-input-wrapper {
+				width: 200px;
+				height: 100px;
+				overflow: hidden;
+				position: relative;
+				left: 40%;
+			}
+
+			.file-input-wrapper > input[type="file"] {
+				font-size: 200px;
+				position: absolute;
+				top: 0;
+				right: 0;
+				opacity: 0;
+			}
+
+			.file-input-wrapper > .btn-file-input {
+				display: inline-block;
+				width: 200px;
+				height: 100px;
+			}
+
+			.file-input-wrapper:hover > .btn-file-input {
+				background-color: #aaa;
+			}
+
+			.pictainer {
+				padding: 50px 10px;
+				z-index: 0;
+			}
+
+			.head {
+
+				padding: 15px 25px;
+				font-size: 72px;
+				text-align: center;
+
+			}
+
+			.input{
+
+				padding: 15px 20px;
+				font-size: 72px;
+				position: fixed;
+				left: 30%;
+
+			}
+			.body {
+				margin:0;
+				background-color: #9F9F9F;
+			}
+
+			ul {
+			    list-style-type: none;
+			    margin: 0;
+			    padding: 0;
+			    overflow: hidden;
+			    background-color: #333;
+			    position: fixed;
+			    top: 0;
+			    width: 100%;
+			}
+
+			li {
+			    float: left;
+			}
+
+			li a {
+			    display: block;
+			    color: white;
+			    text-align: center;
+			    padding: 14px 16px;
+			    text-decoration: none;
+			}
+
+			li a:hover:not(.active) {
+			    background-color: #111;
+			}
+
+			.active {
+			    background-color: #4CAF50;
+			}
+
+			.centered{
+				position:fixed;
+				top: 50%;
+				left: 50%;
+				margin-top: -500px;
+				margin-left: -750px;
+
+			}
+
+		</style>
+
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.css">
+		<link src="css/css.css" type="text/css" rel="stylesheet" media="all" />
+		<link rel="stylesheet" type="text/css" src="css/css.css">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.0/jquery-ui.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.js"></script>
+  	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.js"></script>
+    <script src="/static/js/IndexJS.js"></script> <!-- load our javascript file -->
+</head>
+<body ng-app = "IndexJS" class="body">
+	<div>
+
+		<!-- OUR FORM -->
+		<div ng-controller = "SigninController">
+			<div id="imageOver1" class="imageOver">
+				<div id="imageOver" class="imageOver">
+
+				</div>
+			</div>
+			<ul ng-hide="afterLog">
+			  <li><a id="home" class="active" href="#home" ng-click="homeFunc()">Home</a></li>
+			  <li><a id="upload" href="#upload" ng-click="uploadFunc()">Upload</a></li>
+			  <li><a id="profile" href="#profile" ng-click="profileFunc()">Profile</a></li>
+			  <li><a id="allPics" href="#all-pics" ng-click="allPicsFunc()">All Pics</a></li>
+				<li><a id="logOut" href="#log-out" ng-click="logOutFunc()">Log Out</a></li>
+			</ul>
+			<div class="head">
+				<div class="col-sm-4 col-sm-offset-3" ng-show="profile">
+					<h1> </h1>
+					<form id="profileForm" >
+					<!-- NAME -->
+					<div id="usernameChange-group" class="form-group">
+						<label for="username">New Username</label>
+						<input type="text" class="form-control" id="usernameChange" name="usernameChange" placeholder="New Username" required ng-model="newUser.username">
+						<!-- errors will go here -->
+					</div>
+
+					<button type="button" class="btn btn" ng-click="changeUser(newUser.username)">Change Username<span class="fa fa-arrow-right"></span></button>
+					<p>{{message2}}</p>
+					</form>
+
+					<form id="deleteForm" >
+					<!-- NAME -->
+					<div id="deleteUserChange-group" class="form-group">
+						<label for="delete">Delete Account?</label>
+						<label for="delete">Enter Password</label>
+						<input type="password" class="form-control" id="deleteUser" name="deleteUser" placeholder="Password" required ng-model="deleteUser.pass">
+					</div>
+
+					<button type="button" class="btn btn" ng-click="deleteUser(deleteUser.pass)">Yes Delete<span class="fa fa-arrow-right"></span></button>
+					<p>{{message3}}</p>
+					</form>
+
+				</div>
+			</div>
+
+			<div class="col-sm-4 col-sm-offset-3" ng-hide="hideLog">
+				<h1>Image Viewer Test1</h1>
+				<form id="signinForm" >
+				<!-- NAME -->
+				<div id="username-group" class="form-group">
+					<label for="username">Username</label>
+					<input type="text" class="form-control" id="username" name="username" placeholder="Username" required ng-model="user.username">
+					<!-- errors will go here -->
+				</div>
+
+				<!-- PASSWORD -->
+				<div id="password-group" class="form-group">
+					<label for="password">Password</label>
+					<input type="password" class="form-control" id="password" name="password" placeholder="Password" required ng-model="user.password">
+					<!-- errors will go here -->
+				</div>
+
+				<button type="button" class="btn btn" ng-click="signin(user)">Signin<span class="fa fa-arrow-right"></span></button>
+				<button type="button" class="btn btn" ng-click="createUser(user)">Create User<span class="fa fa-arrow-right"></span></button>
+				<p>{{message}}</p>
+				</form>
+			</div>
+
+			<div ng-show="upload">
+				<form method="post" enctype="multipart/form-data">
+					<h1 class="head">Select Image to upload</h1>
+					<div class="file-input-wrapper">
+						<button class="btn-file-input">Upload Image</button>
+						<input align="middle" type="file" name="fileToUpload" id="fileToUpload" onchange="angular.element(this).scope().uploadFile(this.files)"/>
+					</div>
+				</form>
+			</div>
+
+			<div class="pictainer">
+				<div class="flexbin flexbin-margin" id='target' ng-show="home">
+
+				</div>
+			</div>
+
+			<div class="pictainer">
+				<div class="flexbin flexbin-margin" id='allTarget' ng-show="allPics">
+
+				</div>
+			</div>
+
+
+			<!--<table width="500" border="0" cellpadding="5">
+				<tr id='target'>
+				</tr>
+			</table>-->
+
+		</div>
+	</div>
+
+
+
+</body>
+</html>
